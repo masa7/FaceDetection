@@ -19,13 +19,12 @@ class CameraAnalyzer(
 
     private val cameraOptions = FaceDetectorOptions.Builder()
         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
-        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_NONE)
+        .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
+        .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
         .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_NONE)
         .setMinFaceSize(0.10f)
         .enableTracking()
         .build()
-
-    //https://developers.google.com/android/reference/com/google/mlkit/vision/face/FaceDetectorOptions.Builder
 
     private val detector = FaceDetection.getClient(cameraOptions)
 
