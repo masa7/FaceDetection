@@ -72,7 +72,7 @@ class CameraManager(
     fun changeCamera() {
         cameraProvider.unbindAll()
         cameraOption = if (cameraOption == CameraSelector.LENS_FACING_BACK) CameraSelector.LENS_FACING_FRONT
-        else CameraSelector.LENS_FACING_BACK
+        else CameraSelector.LENS_FACING_FRONT
         CameraUtils.toggleSelector()
         cameraStart()
     }
@@ -83,6 +83,6 @@ class CameraManager(
 
     companion object {
         private const val TAG: String = "CameraManager"
-        var cameraOption : Int = CameraSelector.LENS_FACING_FRONT
+        var cameraOption : Int = CameraSelector.LENS_FACING_BACK
     }
 }
