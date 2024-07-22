@@ -58,6 +58,7 @@ class CameraAnalyzer(
             val faceGraphic = RectangleOverlay(graphicOverlay, it, rect)
             // for face tracking
             if(it.trackingId != null){
+
                 val id = it.trackingId
 
                 if(id in idList){
