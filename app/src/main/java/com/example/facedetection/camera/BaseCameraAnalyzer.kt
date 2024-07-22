@@ -2,12 +2,21 @@ package com.example.facedetection.camera
 
 import android.annotation.SuppressLint
 import android.graphics.Rect
+import android.os.Looper
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import com.example.facedetection.databinding.ActivityMainBinding
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.example.facedetection.graphic.GraphicOverlay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+
+
 
 abstract class BaseCameraAnalyzer<T: List<Face>> : ImageAnalysis.Analyzer {
 
@@ -28,6 +37,8 @@ abstract class BaseCameraAnalyzer<T: List<Face>> : ImageAnalysis.Analyzer {
                 }
         }
     }
+
+
 
     protected abstract fun detectInImage(image: InputImage) : Task<T>
 

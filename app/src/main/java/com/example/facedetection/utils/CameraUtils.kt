@@ -60,13 +60,10 @@ object CameraUtils {
         }
 
         // for front mode
-        if (isFrontMode()) {
-            val centerX = overlay.width.toFloat() / 2
-            mappedBox.apply {
-                left = centerX + (centerX - left)
-                right = centerX - (right - centerX)
-            }
-        }
+        //if (isFrontMode()) {
+            //    val centerX = overlay.width.toFloat() / 2
+
+        //}
 
         return mappedBox
     }
