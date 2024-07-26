@@ -49,6 +49,7 @@ class CameraManager(
             setCameraConfig(cameraProvider, cameraSelector)
         }, ContextCompat.getMainExecutor(context)
         )
+
     }
 
     private fun setCameraConfig(
@@ -64,6 +65,7 @@ class CameraManager(
                 imageAnalysis
             )
             preview.setSurfaceProvider(previewView.surfaceProvider)
+
         } catch (e:Exception) {
             Log.e(TAG, "setCameraConfig: $e")
         }

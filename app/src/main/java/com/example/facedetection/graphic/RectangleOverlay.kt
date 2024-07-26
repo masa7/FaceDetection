@@ -35,15 +35,8 @@ class RectangleOverlay(
 ) : GraphicOverlay.Graphic(graphicOverlay) {
 
     private val boxPaint : Paint = Paint()
-
-    // additional parameters
-    // for count down method
-    var isDetected = false
-    private val countdownTime = 5
-    private lateinit var job: Job
     // for data export
-    private var fileTracking: FileUtils
-    private var fileCountdown: FileUtils
+    //private var fileTracking: FileUtils
 
     init {
         // for face detection
@@ -51,8 +44,7 @@ class RectangleOverlay(
         boxPaint.style = Paint.Style.STROKE
         boxPaint.strokeWidth = 3.0f
         // for data export
-        fileTracking = FileUtils("TrackingID4.txt")
-        fileCountdown = FileUtils("Test.txt")
+        //fileTracking = FileUtils("TrackingID-2.txt")
     }
 
     override fun draw(canvas: Canvas) {
@@ -65,47 +57,13 @@ class RectangleOverlay(
         canvas.drawRect(rect, boxPaint)
     }
 
-    private fun cancelCountDown() {
-        if (::job.isInitialized && job.isActive) {
-            job.cancel()
+    fun setColor(color: String){
+        if(color == "RED"){
+            boxPaint.color = Color.RED
+        }else if(color == "BLUE"){
+            boxPaint.color = Color.BLUE
+        }else if(color == "YELLOW"){
+            boxPaint.color = Color.YELLOW
         }
     }
-
-    fun setColor(){
-        boxPaint.color = Color.RED
-    }
-    fun countDown(){
-        isDetected = true
-        val scope = CoroutineScope(Dispatchers.Default)
-        val handler = Handler(Looper.getMainLooper())
-        job = scope.launch {
-            try {
-                handler.post(
-                    kotlinx.coroutines.Runnable { boxPaint.color = Color.BLUE }
-                )
-
-                repeat(countdownTime) { i ->
-                    delay(1000L)
-                    val times = i+1
-                    fileCountdown.saveFile(times.toString())
-                    fileCountdown.saveFile("\n")
-                    handler.post(
-                        kotlinx.coroutines.Runnable { boxPaint.color = Color.RED }
-                    )
-                }
-            } finally {
-                if(job.isActive){
-                    // カウントダウン後の処理を記述
-                    isDetected = false
-                    handler.post(
-                        kotlinx.coroutines.Runnable { boxPaint.color = Color.RED }
-                    )
-                    scope.cancel()
-                }else{
-                    isDetected = false
-                }
-            }
-        }
-    }
-
 }

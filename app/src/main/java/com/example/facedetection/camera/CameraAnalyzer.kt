@@ -1,5 +1,6 @@
 package com.example.facedetection.camera
 
+import java.time.LocalDateTime
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
@@ -14,17 +15,24 @@ import com.example.facedetection.graphic.GraphicOverlay
 import com.example.facedetection.graphic.RectangleOverlay
 import com.example.facedetection.utils.FileUtils
 import com.google.android.gms.internal.phenotype.zzh.init
+import com.google.mlkit.vision.face.FaceLandmark
+import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 
 class CameraAnalyzer(
     private val overlay: GraphicOverlay<*>
 ) : BaseCameraAnalyzer<List<Face>>() {
 
     private var file: FileUtils
+    private var intervalSec: Int
+    private var prevSec: Int
     // for tracking id
     private var idList: MutableList<Int?> = mutableListOf()
 
     init {
-        file = FileUtils("TrackingID-1.txt")
+        file = FileUtils("TrackingID-2.txt")
+        intervalSec = 1
+        prevSec = 0
     }
 
     override val graphicOverlay: GraphicOverlay<*>
@@ -53,35 +61,34 @@ class CameraAnalyzer(
     }
 
     override fun onSuccess(results: List<Face>, graphicOverlay: GraphicOverlay<*>, rect: Rect) {
-        graphicOverlay.clear()
-        results.forEach {
-            val faceGraphic = RectangleOverlay(graphicOverlay, it, rect)
-            // for face tracking
-            if(it.trackingId != null){
+        // for log recording
+        val dateAndTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-hh:mm:ss"))
+        val curSec = LocalDateTime.now().second
 
-                val id = it.trackingId
+        if (abs(curSec - prevSec) >= 1) {
+            graphicOverlay.clear()
+            results.forEach {
+                val faceGraphic = RectangleOverlay(graphicOverlay, it, rect)
+                // for face tracking
+                if (it.trackingId != null) {
+                    val id = it.trackingId
 
-                if(id in idList){
-                    faceGraphic.setColor()
-                    file.saveFile(id.toString())
-                    file.saveFile("\n")
-                }else{
-                    idList.add(id)
-                    //file.saveFile(id.toString())
-                    //file.saveFile(", ")
-                    //file.saveFile(idList.size.toString())
-                    //file.saveFile("\n")
+                    if (id in idList) {
+                        file.saveFile(dateAndTime)
+                        file.saveFile(", ")
+                        file.saveFile(id.toString())
+                        file.saveFile("\n")
+
+                        faceGraphic.setColor("RED")
+                    } else {
+                        idList.add(id)
+                    }
                 }
+                graphicOverlay.add(faceGraphic)
             }
-            graphicOverlay.add(faceGraphic)
-
-            // for count down
-            //if(!faceGraphic.isDetected){
-            //    faceGraphic.countDown()
-            //    graphicOverlay.add(faceGraphic)
-            //}
+            graphicOverlay.postInvalidate()
+            prevSec = curSec
         }
-        graphicOverlay.postInvalidate()
     }
 
     override fun onFailure(e: Exception) {
